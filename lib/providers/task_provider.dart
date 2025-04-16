@@ -4,25 +4,30 @@ import '../models/task.dart';
 
 class TaskProvider with ChangeNotifier {
   List<Task> _tasks = [];
+  bool _isLoading = false;
 
   List<Task> get tasks => _tasks;
+  bool get isLoading => _isLoading;
 
   // Carregar task de SharedPreferences
   Future<void> loadTasks() async {
+    _isLoading = true;
+    notifyListeners();
+
     final prefs = await SharedPreferences.getInstance();
-    final tasksData = prefs.getStringList('tasks');
-    if (tasksData != null) {
-      _tasks =
-          tasksData
-              .map(
-                (taskStr) => Task(
-                  id: taskStr.split('||')[0],
-                  title: taskStr.split('||')[1],
-                  isComplete: taskStr.split('||')[2] == 'true',
-                ),
-              )
-              .toList();
-    }
+    final tasksData = prefs.getStringList('tasks') ?? [];
+
+    _tasks =
+        tasksData.map((taskStr) {
+          final parts = taskStr.split('||');
+          return Task(
+            id: parts[0],
+            title: parts[1],
+            isComplete: parts[2] == 'true',
+          );
+        }).toList();
+
+    _isLoading = false;
     notifyListeners();
   }
 
@@ -33,7 +38,6 @@ class TaskProvider with ChangeNotifier {
         _tasks
             .map((task) => '${task.id}||${task.title}||${task.isComplete}')
             .toList();
-
     await prefs.setStringList('tasks', tasksData);
   }
 
