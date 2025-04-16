@@ -9,16 +9,14 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final taskProvider = Provider.of<TaskProvider>(context);
-
     return Scaffold(
       appBar: AppBar(title: const Text('Lista de Tarefas')),
-      body: FutureBuilder(
-        future: taskProvider.loadTasks(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+      body: Consumer<TaskProvider>(
+        builder: (context, taskProvider, child) {
+          if (taskProvider.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
+
           return ListView.builder(
             itemCount: taskProvider.tasks.length,
             itemBuilder: (ctx, index) {
