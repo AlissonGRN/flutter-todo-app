@@ -1,11 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/task_provider.dart';
-// import '../models/task.dart';
+//import '../models/task.dart';
 import 'add_task_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Carrega as tarefas ao inicializar a tela
+    Provider.of<TaskProvider>(context, listen: false).loadTasks();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,10 +25,12 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('Lista de Tarefas')),
       body: Consumer<TaskProvider>(
         builder: (context, taskProvider, child) {
+          // Mostra loading enquanto carrega
           if (taskProvider.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
 
+          // Mostra lista de tarefas
           return ListView.builder(
             itemCount: taskProvider.tasks.length,
             itemBuilder: (ctx, index) {
