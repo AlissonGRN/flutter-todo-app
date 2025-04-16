@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/task.dart';
@@ -9,7 +10,6 @@ class TaskProvider with ChangeNotifier {
   List<Task> get tasks => _tasks;
   bool get isLoading => _isLoading;
 
-  // Carregar task de SharedPreferences
   Future<void> loadTasks() async {
     _isLoading = true;
     notifyListeners();
@@ -18,12 +18,12 @@ class TaskProvider with ChangeNotifier {
     final tasksData = prefs.getStringList('tasks') ?? [];
 
     _tasks =
-        tasksData.map((taskStr) {
-          final parts = taskStr.split('||');
+        tasksData.map((taskJson) {
+          final taskMap = jsonDecode(taskJson);
           return Task(
-            id: parts[0],
-            title: parts[1],
-            isComplete: parts[2] == 'true',
+            id: taskMap['id'],
+            title: taskMap['title'],
+            isCompleted: taskMap['isCompleted'],
           );
         }).toList();
 
@@ -31,36 +31,41 @@ class TaskProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // salvar task em SharedPreferences
   Future<void> _saveTasks() async {
     final prefs = await SharedPreferences.getInstance();
     final tasksData =
         _tasks
-            .map((task) => '${task.id}||${task.title}||${task.isComplete}')
+            .map(
+              (task) => jsonEncode({
+                'id': task.id,
+                'title': task.title,
+                'isCompleted': task.isCompleted,
+              }),
+            )
             .toList();
+
     await prefs.setStringList('tasks', tasksData);
   }
 
-  // adcionar task
   void addTask(String title) {
-    _tasks.add(Task(id: DateTime.now.toString(), title: title));
+    _tasks.add(Task.create(title));
     _saveTasks();
     notifyListeners();
   }
 
-  // remover task
   void removeTask(String id) {
-    final taskIndex = _tasks.indexWhere((task) => task.id == id);
-    _tasks[taskIndex].isComplete = !_tasks[taskIndex].isComplete;
+    _tasks.removeWhere((task) => task.id == id);
     _saveTasks();
     notifyListeners();
   }
 
-  // Marcar task como concluída
   void toggleTask(String id) {
-    final taskIndex = _tasks.indexWhere((task) => task.id == id);
-    _tasks[taskIndex].isComplete = !_tasks[taskIndex].isComplete;
-    _saveTasks();
-    notifyListeners();
+    final index = _tasks.indexWhere((task) => task.id == id);
+
+    if (index != -1) {
+      _tasks[index].isCompleted = !_tasks[index].isCompleted;
+      _saveTasks();
+      notifyListeners();
+    }
   }
 }
