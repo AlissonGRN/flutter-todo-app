@@ -1,16 +1,45 @@
-# todo_app
+# 📱 Lista de Tarefas Flutter
 
-A new Flutter project.
+Um aplicativo simples para gerenciar tarefas diárias, desenvolvido com Flutter.  
+**Funcionalidades principais**:
+- Adicionar novas tarefas
+- Remover tarefas
+- Marcar/desmarcar como concluída
+- Persistência de dados local
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## 🖼️ Telas do Aplicativo
 
-A few resources to get you started if this is your first Flutter project:
+| Tela Principal | Adicionar Tarefa |
+|----------------|-------------------|
+| <img src="screenshots/flutter_01.png" width="300"> | <img src="screenshots/flutter_02.png" width="300"> |
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## ⚙️ Como Executar
+
+### Pré-requisitos
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) instalado
+- Dispositivo/emulador Android ou iOS configurado
+
+### Passos
+1. **Clone o projeto**:
+   ```bash
+   git clone https://github.com/AlissonGRN/flutter-todo-app.git
+   ```
+
+2. **Acesse a pasta do projeto**:
+   ```bash
+   cd todo_app
+   ```
+
+3. **Instale as dependências**:
+   ```bash
+   flutter pub get
+   ```
+
+4. **Execute o app**:
+   ```bash
+   flutter run
+   ```
